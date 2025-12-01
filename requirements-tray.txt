@@ -1,0 +1,6 @@
+# Optional dependencies for system tray functionality
+# Install these if you want to use server-tray.py
+
+pystray==0.19.5
+Pillow>=10.0.0,<11.0.0
+

@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Print Server - Multiple Printers Example</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 30px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .printer-section {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .printer-section.connected {
+            border-color: #28a745;
+            background: #f0fff4;
+        }
+
+        .printer-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .printer-section.connected h3::before {
+            content: "✓";
+            color: #28a745;
+            font-size: 1.5em;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        textarea {
+            min-height: 100px;
+            font-family: monospace;
+        }
+
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background 0.3s;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: #5568d3;
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        button.secondary {
+            background: #6c757d;
+        }
+
+        button.secondary:hover {
+            background: #5a6268;
+        }
+
+        button.danger {
+            background: #dc3545;
+        }
+
+        button.danger:hover {
+            background: #c82333;
+        }
+
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .printer-list {
+            max-height: 300px;
+            overflow-y: auto;
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            margin-top: 10px;
+        }
+
+        .printer-item {
+            border: 2px solid #ddd;
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+        }
+
+        .printer-item.connected {
+            border-color: #28a745;
+            background: #f0fff4;
+        }
+
+        .printer-item button {
+            margin-top: 8px;
+            padding: 8px 16px;
+            font-size: 13px;
+        }
+
+        @media (max-width: 900px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🖨️ Simple Print Server - Multiple Printers</h1>
+        <p class="subtitle">Connect multiple printers and print to each independently</p>
+
+        <!-- List Printers Section -->
+        <div class="section">
+            <h2>📋 Available Printers</h2>
+            <button onclick="listPrinters()" style="margin-bottom: 15px;">🔍 Refresh Printer List</button>
+            <div id="printerList" class="printer-list">
+                <p style="color: #666; font-style: italic;">Click "Refresh Printer List" to see all installed printers</p>
+            </div>
+        </div>
+
+        <!-- Printer 1: Counter/Receipt Printer -->
+        <div class="section">
+            <h2>🛒 Printer 1: Counter / Receipt Printer</h2>
+            <div id="printer1Section" class="printer-section">
+                <h3>Counter Printer</h3>
+                <div id="printer1Status" class="status info">Not connected - Select a printer above</div>
+                <div class="form-group">
+                    <label>Select Printer:</label>
+                    <select id="printer1Select">
+                        <option value="">-- Select a printer --</option>
+                    </select>
+                </div>
+                <button onclick="connectPrinter1()" id="printer1ConnectBtn">Connect to Counter Printer</button>
+                <button onclick="disconnectPrinter1()" id="printer1DisconnectBtn" class="danger" style="display: none;">Disconnect</button>
+                
+                <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #ddd;">
+                    <h4 style="margin-bottom: 10px; color: #667eea;">Print Receipt</h4>
+                    <div class="form-group">
+                        <label>Store Name</label>
+                        <input type="text" id="storeName1" value="My Store">
+                    </div>
+                    <div class="form-group">
+                        <label>Store Address</label>
+                        <input type="text" id="storeAddress1" value="123 Main St, City, State">
+                    </div>
+                    <div class="form-group">
+                        <label>Items (JSON format)</label>
+                        <textarea id="receiptItems1">[
+  {"name": "Item 1", "quantity": 2, "price": 10.99},
+  {"name": "Item 2", "quantity": 1, "price": 5.50}
+]</textarea>
+                    </div>
+                    <div class="grid">
+                        <div class="form-group">
+                            <label>Subtotal</label>
+                            <input type="number" id="subtotal1" value="27.48" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label>Tax</label>
+                            <input type="number" id="tax1" value="2.20" step="0.01">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Total</label>
+                        <input type="number" id="total1" value="29.68" step="0.01">
+                    </div>
+                    <button onclick="printReceipt1()" id="printer1PrintBtn" disabled>Print Receipt</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Printer 2: Kitchen/Order Printer -->
+        <div class="section">
+            <h2>🍳 Printer 2: Kitchen / Order Printer</h2>
+            <div id="printer2Section" class="printer-section">
+                <h3>Kitchen Printer</h3>
+                <div id="printer2Status" class="status info">Not connected - Select a printer above</div>
+                <div class="form-group">
+                    <label>Select Printer:</label>
+                    <select id="printer2Select">
+                        <option value="">-- Select a printer --</option>
+                    </select>
+                </div>
+                <button onclick="connectPrinter2()" id="printer2ConnectBtn">Connect to Kitchen Printer</button>
+                <button onclick="disconnectPrinter2()" id="printer2DisconnectBtn" class="danger" style="display: none;">Disconnect</button>
+                
+                <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #ddd;">
+                    <h4 style="margin-bottom: 10px; color: #667eea;">Print Kitchen Order</h4>
+                    <div class="form-group">
+                        <label>Order Number</label>
+                        <input type="text" id="orderNumber" value="ORDER #1234">
+                    </div>
+                    <div class="form-group">
+                        <label>Table/Station</label>
+                        <input type="text" id="tableNumber" value="Table 5">
+                    </div>
+                    <div class="form-group">
+                        <label>Items (JSON format)</label>
+                        <textarea id="orderItems">[
+  {"name": "Burger", "quantity": 2, "notes": "No onions"},
+  {"name": "Fries", "quantity": 1, "notes": "Extra crispy"},
+  {"name": "Salad", "quantity": 1, "notes": "Dressing on side"}
+]</textarea>
+                    </div>
+                    <button onclick="printOrder2()" id="printer2PrintBtn" disabled>Print Kitchen Order</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Test Section -->
+        <div class="section">
+            <h2>⚡ Quick Test - Print to Both Printers</h2>
+            <div class="form-group">
+                <label>Test Message</label>
+                <textarea id="testMessage">This is a test print from Simple Print Server!</textarea>
+            </div>
+            <button onclick="printToBoth()">Print Test Message to Both Printers</button>
+        </div>
+    </div>
+
+    <script src="print-client.js"></script>
+    <script>
+        // Initialize print client
+        const printer = new SimplePrintClient('http://localhost:8888');
+        let printer1Id = null;
+        let printer2Id = null;
+        let printerListData = [];
+
+        // Update printer select dropdowns
+        function updatePrinterSelects() {
+            const select1 = document.getElementById('printer1Select');
+            const select2 = document.getElementById('printer2Select');
+            
+            // Clear existing options (except first)
+            select1.innerHTML = '<option value="">-- Select a printer --</option>';
+            select2.innerHTML = '<option value="">-- Select a printer --</option>';
+            
+            printerListData.forEach((p, index) => {
+                const option1 = document.createElement('option');
+                option1.value = p.id || index;
+                option1.textContent = p.name || 'Unknown Printer';
+                select1.appendChild(option1);
+                
+                const option2 = document.createElement('option');
+                option2.value = p.id || index;
+                option2.textContent = p.name || 'Unknown Printer';
+                select2.appendChild(option2);
+            });
+        }
+
+        // List all installed printers
+        async function listPrinters() {
+            const printerListDiv = document.getElementById('printerList');
+            
+            try {
+                printerListDiv.innerHTML = '<p style="color: #666;">Loading printers...</p>';
+                
+                const response = await fetch(`${printer.serverUrl}/printer/list`);
+                const data = await response.json();
+                
+                printerListData = data.printers || [];
+                
+                if (printerListData.length > 0) {
+                    let html = `<p style="margin-bottom: 10px; font-weight: bold; color: #333;">Found ${data.count} printer(s):</p>`;
+                    html += '<div>';
+                    
+                    printerListData.forEach((p, index) => {
+                        const isSystemPrinter = p.system_printer !== false;
+                        const typeLabel = p.type ? p.type.toUpperCase() : 'UNKNOWN';
+                        const statusColor = p.status === 'ready' ? '#28a745' : '#dc3545';
+                        const isConnected1 = printer1Id && (printer1Id === (p.id || index) || printer1Id === p.name);
+                        const isConnected2 = printer2Id && (printer2Id === (p.id || index) || printer2Id === p.name);
+                        const isConnected = isConnected1 || isConnected2;
+                        const connectedLabel = isConnected1 && isConnected2 ? ' (Both)' : isConnected1 ? ' (Printer 1)' : isConnected2 ? ' (Printer 2)' : '';
+                        
+                        html += `
+                            <div class="printer-item ${isConnected ? 'connected' : ''}" style="margin-bottom: 10px;">
+                                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
+                                    <div>
+                                        <strong style="color: #333; font-size: 16px;">${p.name || 'Unknown Printer'}${connectedLabel}</strong>
+                                        ${isSystemPrinter ? '<span style="background: #667eea; color: white; padding: 2px 6px; border-radius: 3px; font-size: 11px; margin-left: 8px;">SYSTEM</span>' : '<span style="background: #ffc107; color: #333; padding: 2px 6px; border-radius: 3px; font-size: 11px; margin-left: 8px;">USB</span>'}
+                                    </div>
+                                    <span style="background: ${statusColor}; color: white; padding: 2px 8px; border-radius: 3px; font-size: 11px;">${p.status || 'unknown'}</span>
+                                </div>
+                                ${p.port ? `<div style="font-size: 12px; color: #666; margin-bottom: 8px;"><strong>Port:</strong> ${p.port}</div>` : ''}
+                            </div>
+                        `;
+                    });
+                    
+                    html += '</div>';
+                    printerListDiv.innerHTML = html;
+                    
+                    // Update select dropdowns
+                    updatePrinterSelects();
+                } else {
+                    printerListDiv.innerHTML = '<p style="color: #666;">No printers found. Make sure printers are installed in your system.</p>';
+                }
+            } catch (error) {
+                printerListDiv.innerHTML = `<p style="color: #dc3545;">Error loading printers: ${error.message}</p>`;
+            }
+        }
+
+        // Connect Printer 1 (Counter)
+        async function connectPrinter1() {
+            const select = document.getElementById('printer1Select');
+            const printerId = select.value;
+            
+            if (!printerId) {
+                alert('Please select a printer first!');
+                return;
+            }
+            
+            const statusDiv = document.getElementById('printer1Status');
+            const section = document.getElementById('printer1Section');
+            const connectBtn = document.getElementById('printer1ConnectBtn');
+            const disconnectBtn = document.getElementById('printer1DisconnectBtn');
+            const printBtn = document.getElementById('printer1PrintBtn');
+            
+            try {
+                statusDiv.className = 'status info';
+                statusDiv.textContent = 'Connecting...';
+                
+                // Disconnect if already connected
+                if (printer1Id) {
+                    try {
+                        await printer.disconnect(printer1Id);
+                    } catch (e) {
+                        // Ignore
+                    }
+                }
+                
+                const selectedPrinter = printerListData[parseInt(printerId)];
+                const printerName = selectedPrinter?.name || `Printer ${printerId}`;
+                
+                // Connect with custom ID 'counter'
+                await printer.connectByName(printerId, 'counter');
+                
+                printer1Id = 'counter';
+                statusDiv.className = 'status success';
+                statusDiv.textContent = `✓ Connected to: ${printerName}`;
+                section.classList.add('connected');
+                connectBtn.style.display = 'none';
+                disconnectBtn.style.display = 'block';
+                printBtn.disabled = false;
+                
+                await listPrinters(); // Refresh list
+            } catch (error) {
+                printer1Id = null;
+                statusDiv.className = 'status error';
+                statusDiv.textContent = `✗ Connection failed: ${error.message}`;
+                section.classList.remove('connected');
+                connectBtn.style.display = 'block';
+                disconnectBtn.style.display = 'none';
+                printBtn.disabled = true;
+                alert('Connection failed: ' + error.message);
+            }
+        }
+
+        // Disconnect Printer 1
+        async function disconnectPrinter1() {
+            if (!printer1Id) return;
+            
+            const statusDiv = document.getElementById('printer1Status');
+            const section = document.getElementById('printer1Section');
+            const connectBtn = document.getElementById('printer1ConnectBtn');
+            const disconnectBtn = document.getElementById('printer1DisconnectBtn');
+            const printBtn = document.getElementById('printer1PrintBtn');
+            
+            try {
+                await printer.disconnect(printer1Id);
+                printer1Id = null;
+                statusDiv.className = 'status info';
+                statusDiv.textContent = 'Not connected - Select a printer above';
+                section.classList.remove('connected');
+                connectBtn.style.display = 'block';
+                disconnectBtn.style.display = 'none';
+                printBtn.disabled = true;
+                
+                await listPrinters(); // Refresh list
+            } catch (error) {
+                alert('Disconnect failed: ' + error.message);
+            }
+        }
+
+        // Connect Printer 2 (Kitchen)
+        async function connectPrinter2() {
+            const select = document.getElementById('printer2Select');
+            const printerId = select.value;
+            
+            if (!printerId) {
+                alert('Please select a printer first!');
+                return;
+            }
+            
+            const statusDiv = document.getElementById('printer2Status');
+            const section = document.getElementById('printer2Section');
+            const connectBtn = document.getElementById('printer2ConnectBtn');
+            const disconnectBtn = document.getElementById('printer2DisconnectBtn');
+            const printBtn = document.getElementById('printer2PrintBtn');
+            
+            try {
+                statusDiv.className = 'status info';
+                statusDiv.textContent = 'Connecting...';
+                
+                // Disconnect if already connected
+                if (printer2Id) {
+                    try {
+                        await printer.disconnect(printer2Id);
+                    } catch (e) {
+                        // Ignore
+                    }
+                }
+                
+                const selectedPrinter = printerListData[parseInt(printerId)];
+                const printerName = selectedPrinter?.name || `Printer ${printerId}`;
+                
+                // Connect with custom ID 'kitchen'
+                await printer.connectByName(printerId, 'kitchen');
+                
+                printer2Id = 'kitchen';
+                statusDiv.className = 'status success';
+                statusDiv.textContent = `✓ Connected to: ${printerName}`;
+                section.classList.add('connected');
+                connectBtn.style.display = 'none';
+                disconnectBtn.style.display = 'block';
+                printBtn.disabled = false;
+                
+                await listPrinters(); // Refresh list
+            } catch (error) {
+                printer2Id = null;
+                statusDiv.className = 'status error';
+                statusDiv.textContent = `✗ Connection failed: ${error.message}`;
+                section.classList.remove('connected');
+                connectBtn.style.display = 'block';
+                disconnectBtn.style.display = 'none';
+                printBtn.disabled = true;
+                alert('Connection failed: ' + error.message);
+            }
+        }
+
+        // Disconnect Printer 2
+        async function disconnectPrinter2() {
+            if (!printer2Id) return;
+            
+            const statusDiv = document.getElementById('printer2Status');
+            const section = document.getElementById('printer2Section');
+            const connectBtn = document.getElementById('printer2ConnectBtn');
+            const disconnectBtn = document.getElementById('printer2DisconnectBtn');
+            const printBtn = document.getElementById('printer2PrintBtn');
+            
+            try {
+                await printer.disconnect(printer2Id);
+                printer2Id = null;
+                statusDiv.className = 'status info';
+                statusDiv.textContent = 'Not connected - Select a printer above';
+                section.classList.remove('connected');
+                connectBtn.style.display = 'block';
+                disconnectBtn.style.display = 'none';
+                printBtn.disabled = true;
+                
+                await listPrinters(); // Refresh list
+            } catch (error) {
+                alert('Disconnect failed: ' + error.message);
+            }
+        }
+
+        // Print Receipt to Printer 1
+        async function printReceipt1() {
+            if (!printer1Id) {
+                alert('Please connect Printer 1 first!');
+                return;
+            }
+
+            try {
+                const items = JSON.parse(document.getElementById('receiptItems1').value);
+                const receipt = {
+                    header: 'RECEIPT',
+                    storeName: document.getElementById('storeName1').value,
+                    storeAddress: document.getElementById('storeAddress1').value,
+                    items: items,
+                    subtotal: parseFloat(document.getElementById('subtotal1').value),
+                    tax: parseFloat(document.getElementById('tax1').value),
+                    total: parseFloat(document.getElementById('total1').value),
+                    footer: 'Thank you for your purchase!'
+                };
+
+                await printer.printReceipt(printer1Id, receipt);
+                alert('Receipt printed successfully to Counter Printer!');
+            } catch (error) {
+                alert('Print failed: ' + error.message);
+            }
+        }
+
+        // Print Order to Printer 2
+        async function printOrder2() {
+            if (!printer2Id) {
+                alert('Please connect Printer 2 first!');
+                return;
+            }
+
+            try {
+                const orderNumber = document.getElementById('orderNumber').value;
+                const tableNumber = document.getElementById('tableNumber').value;
+                const items = JSON.parse(document.getElementById('orderItems').value);
+                
+                const commands = [];
+                
+                // Header
+                commands.push({ action: 'set', attribute: 'align', value: 'center' });
+                commands.push({ action: 'set', attribute: 'text_size', value: 'b' });
+                commands.push({ action: 'text', data: 'KITCHEN ORDER\n' });
+                commands.push({ action: 'text', data: orderNumber + '\n' });
+                commands.push({ action: 'text', data: tableNumber + '\n' });
+                commands.push({ action: 'text', data: '--------------------------------\n' });
+                
+                // Items
+                commands.push({ action: 'set', attribute: 'align', value: 'left' });
+                commands.push({ action: 'set', attribute: 'text_size', value: 'normal' });
+                
+                items.forEach(item => {
+                    const name = item.name || '';
+                    const qty = item.quantity || 1;
+                    const notes = item.notes || '';
+                    
+                    commands.push({ action: 'text', data: `${name} x${qty}\n` });
+                    if (notes) {
+                        commands.push({ action: 'text', data: `  Note: ${notes}\n` });
+                    }
+                });
+                
+                commands.push({ action: 'text', data: '--------------------------------\n' });
+                commands.push({ action: 'cut' });
+
+                await printer.print(printer2Id, {
+                    type: 'escpos',
+                    commands: commands
+                });
+                
+                alert('Kitchen order printed successfully!');
+            } catch (error) {
+                alert('Print failed: ' + error.message);
+            }
+        }
+
+        // Print to both printers
+        let isPrinting = false;
+        async function printToBoth() {
+            // Prevent double-clicks
+            if (isPrinting) {
+                console.log('Print already in progress, ignoring duplicate request');
+                return;
+            }
+            
+            const message = document.getElementById('testMessage').value;
+            
+            if (!printer1Id && !printer2Id) {
+                alert('Please connect at least one printer first!');
+                return;
+            }
+            
+            isPrinting = true;
+            const button = event.target;
+            const originalText = button.textContent;
+            button.disabled = true;
+            button.textContent = 'Printing...';
+            
+            try {
+                const promises = [];
+                
+                if (printer1Id) {
+                    console.log('Sending print to printer 1:', printer1Id);
+                    promises.push(printer.printText(printer1Id, `[COUNTER PRINTER]\n${message}\n`, true));
+                }
+                
+                if (printer2Id) {
+                    console.log('Sending print to printer 2:', printer2Id);
+                    promises.push(printer.printText(printer2Id, `[KITCHEN PRINTER]\n${message}\n`, true));
+                }
+                
+                await Promise.all(promises);
+                alert(`Test message printed to ${printer1Id && printer2Id ? 'both printers' : 'connected printer'}!`);
+            } catch (error) {
+                alert('Print failed: ' + error.message);
+                console.error('Print error:', error);
+            } finally {
+                isPrinting = false;
+                button.disabled = false;
+                button.textContent = originalText;
+            }
+        }
+
+        // Check server health on load
+        window.addEventListener('load', async function() {
+            try {
+                const health = await printer.checkHealth();
+                console.log('Server status:', health);
+                // Auto-load printers on page load
+                await listPrinters();
+            } catch (error) {
+                alert('Cannot connect to print server. Make sure server.py is running on port 8888.');
+            }
+        });
+    </script>
+</body>
+</html>

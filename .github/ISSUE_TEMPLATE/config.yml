@@ -1,0 +1,9 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Documentation
+    url: https://github.com/YOUR_USERNAME/print-program/blob/main/README.md
+    about: Check the README and API documentation for usage instructions
+  - name: Troubleshooting Guide
+    url: https://github.com/YOUR_USERNAME/print-program/blob/main/TROUBLESHOOTING.md
+    about: Check the troubleshooting guide for common issues and solutions
+

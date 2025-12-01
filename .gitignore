@@ -1,0 +1,70 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Logs
+logs/
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Test files and temporary files
+*.tmp
+*.bak
+*.test
+test_*.py
+*_test.py
+
+# Printer test files (if any)
+*Demo Printer*
+*Test Print*
+
+# Environment variables
+.env
+.env.local
+
+# Windows
+*.lnk
+
+# Project specific
+# Keep example.html and print-client.js (they're part of the project)
+

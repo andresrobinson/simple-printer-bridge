@@ -1,0 +1,10 @@
+Flask==3.0.0
+flask-cors==4.0.0
+python-escpos==3.1
+pyusb==1.2.1
+pywin32>=306; sys_platform == "win32"
+
+# Optional: System tray dependencies (install separately if needed)
+# pystray==0.19.5
+# Pillow>=10.0.0
+
