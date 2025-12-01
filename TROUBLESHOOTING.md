@@ -1,5 +1,18 @@
 # Troubleshooting Guide
 
+> 📖 **Other Documentation:**
+> - [README.md](README.md) - Installation, usage, and quick start guide
+> - [API.md](API.md) - Complete API reference
+> - [CONTRIBUTING.md](CONTRIBUTING.md) - How to contribute to this project
+
+## Table of Contents
+
+- [Pillow Installation Issues (System Tray Mode)](#pillow-installation-issues-system-tray-mode)
+- [Other Common Issues](#other-common-issues)
+- [Getting Help](#getting-help)
+
+---
+
 ## Pillow Installation Issues (System Tray Mode)
 
 If you're getting errors installing Pillow for system tray mode, here are several solutions:
@@ -93,4 +106,18 @@ If you continue to have issues:
 2. Try running in console mode: `python server.py`
 3. Check the server console for error messages
 4. Verify Python version: `python --version` (3.7+ required)
+5. Review the [API Documentation](API.md) for correct usage
+6. Check the [README.md](README.md) for installation instructions
+
+**Still need help?**
+- Open an issue on [GitHub](https://github.com/andresrobinson/simple-printer-bridge/issues)
+- Check existing issues for similar problems
+
+---
+
+## Related Documentation
+
+- [README.md](README.md) - Installation, usage, and quick start guide
+- [API.md](API.md) - Complete API reference
+- [CONTRIBUTING.md](CONTRIBUTING.md) - How to contribute to this project
 

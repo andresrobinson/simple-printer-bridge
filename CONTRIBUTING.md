@@ -2,6 +2,19 @@
 
 Thank you for your interest in contributing to Simple Print Server! This document provides guidelines and instructions for contributing.
 
+> 📖 **Other Documentation:**
+> - [README.md](README.md) - Installation, usage, and quick start guide
+> - [API.md](API.md) - Complete API reference
+> - [TROUBLESHOOTING.md](TROUBLESHOOTING.md) - Common issues and solutions
+
+## Table of Contents
+
+- [How to Contribute](#how-to-contribute)
+- [Code Style](#code-style)
+- [Testing](#testing)
+- [Project Structure](#project-structure)
+- [Areas for Contribution](#areas-for-contribution)
+
 ## How to Contribute
 
 ### Reporting Bugs
@@ -84,6 +97,12 @@ print-program/
 ## Questions?
 
 If you have questions, feel free to open an issue with the `question` label.
+
+## Additional Resources
+
+- [README.md](README.md) - Project overview and installation
+- [API.md](API.md) - API documentation and examples
+- [TROUBLESHOOTING.md](TROUBLESHOOTING.md) - Common issues and solutions
 
 Thank you for contributing! 🎉
 

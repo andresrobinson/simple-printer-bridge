@@ -2,6 +2,11 @@
 
 Complete API reference for Simple Print Server.
 
+> 📖 **Other Documentation:**
+> - [README.md](README.md) - Installation, usage, and quick start guide
+> - [TROUBLESHOOTING.md](TROUBLESHOOTING.md) - Common issues and solutions
+> - [CONTRIBUTING.md](CONTRIBUTING.md) - How to contribute to this project
+
 ## Table of Contents
 
 - [Server API Endpoints](#server-api-endpoints)
@@ -670,4 +675,12 @@ Common errors:
 - `Printer not connected`: No printer is connected
 - `Failed to connect`: Printer connection failed
 - `Print error: ...`: Printing failed
+
+---
+
+## Related Documentation
+
+- [README.md](README.md) - Installation, usage, and quick start guide
+- [TROUBLESHOOTING.md](TROUBLESHOOTING.md) - Common issues and solutions
+- [CONTRIBUTING.md](CONTRIBUTING.md) - How to contribute to this project
 

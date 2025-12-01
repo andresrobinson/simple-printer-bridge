@@ -8,6 +8,30 @@ A lightweight alternative to QZ Tray for thermal printers that runs on Python. *
 
 > **Note:** This project is ready for production use. Perfect for store sales systems, POS applications, and any scenario where you need to print from a browser to thermal printers.
 
+## 📚 Documentation
+
+- **[API Documentation](API.md)** - Complete API reference for all endpoints and methods
+- **[Troubleshooting Guide](TROUBLESHOOTING.md)** - Solutions for common issues and installation problems
+- **[Contributing Guide](CONTRIBUTING.md)** - How to contribute to this project
+- **[License](LICENSE)** - MIT License details
+
+## Table of Contents
+
+- [Features](#features)
+- [Installation](#installation)
+  - [Quick Install](#quick-install-recommended)
+  - [Manual Installation](#manual-installation)
+- [Usage](#usage)
+  - [Multiple Printer Support](#multiple-printer-support)
+  - [Basic JavaScript Usage](#basic-javascript-usage)
+  - [Printer Connection Types](#printer-connection-types)
+- [API Documentation](#api-documentation)
+- [Finding Your Printer's Vendor/Product ID](#finding-your-printers-vendorproduct-id)
+- [Troubleshooting](#troubleshooting)
+- [Differences from QZ Tray](#differences-from-qz-tray)
+- [Contributing](#contributing)
+- [License](#license)
+
 ## Features
 
 - ✅ Simple Python server (no compilation needed)
@@ -209,7 +233,7 @@ await printer.connect({
 
 ## API Documentation
 
-For complete API documentation, see [API.md](API.md).
+For complete API documentation with detailed examples, see **[API.md](API.md)**.
 
 ### Quick Reference
 
@@ -253,22 +277,30 @@ system_profiler SPUSBDataType
 
 ## Troubleshooting
 
-### "Cannot connect to print server"
+For detailed troubleshooting steps and solutions, see **[TROUBLESHOOTING.md](TROUBLESHOOTING.md)**.
+
+### Quick Fixes
+
+**"Cannot connect to print server"**
 - Make sure `server.py` is running
 - Check that port 8888 is not blocked by firewall
 - Verify the server URL in your JavaScript code
 
-### "Failed to connect to printer"
+**"Failed to connect to printer"**
 - Verify your printer's vendor/product IDs
 - For USB printers, ensure drivers are installed (use Zadig on Windows)
 - Check that the printer is powered on and connected
 - Try using 'file' type for testing first
 
-### Permission Errors (Linux/macOS)
-You may need to add your user to the `lp` group:
-```bash
-sudo usermod -a -G lp $USER
-```
+**Permission Errors (Linux/macOS)**
+- You may need to add your user to the `lp` group:
+  ```bash
+  sudo usermod -a -G lp $USER
+  ```
+
+**Pillow Installation Issues (System Tray)**
+- See [TROUBLESHOOTING.md](TROUBLESHOOTING.md#pillow-installation-issues-system-tray-mode) for detailed solutions
+- System tray mode is optional - console mode works perfectly!
 
 ## Differences from QZ Tray
 
@@ -281,13 +313,16 @@ sudo usermod -a -G lp $USER
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
+Contributions are welcome! Please read our **[Contributing Guide](CONTRIBUTING.md)** for detailed instructions.
 
+**Quick Start:**
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
 3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
+
+For more details, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
@@ -298,4 +333,13 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Built as an alternative to QZ Tray for users who don't need certificate signing
 - Uses [python-escpos](https://github.com/python-escpos/python-escpos) for ESC/POS command support
 - Inspired by the need for simpler printer integration in web applications
+
+---
+
+## 📚 Full Documentation
+
+- **[API.md](API.md)** - Complete API reference for all endpoints and methods
+- **[TROUBLESHOOTING.md](TROUBLESHOOTING.md)** - Solutions for common issues and installation problems
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** - How to contribute to this project
+- **[LICENSE](LICENSE)** - MIT License details
 
